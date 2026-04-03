@@ -67,7 +67,7 @@ def main():
     # Register Message Tracking (XP/Quizzes)
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), message_tracker.handle_message))
     
-    application.add_handler(error_handler)
+    application.add_error_handler(error_handler)
 
     logger.info("Starting bot polling...")
     application.run_polling(drop_pending_updates=True)
