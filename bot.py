@@ -31,9 +31,12 @@ async def error_handler(update, context):
     logger.error(msg="Exception while handling an update:", exc_info=context.error)
 
 async def post_init(application: Application):
-    await database.init_db()
-    asyncio.create_task(web_server())
-    logger.info("Bot initialized.")
+    try:
+        await database.init_db()
+        asyncio.create_task(web_server())
+        logger.info("Bot initialized.")
+    except Exception as e:
+        logger.critical(f"Initialization error (DB or Web): {e}", exc_info=True)
 
 def main():
     if not BOT_TOKEN:
@@ -70,7 +73,10 @@ def main():
     application.add_error_handler(error_handler)
 
     logger.info("Starting bot polling...")
-    application.run_polling(drop_pending_updates=True)
+    try:
+        application.run_polling(drop_pending_updates=True)
+    except Exception as e:
+        logger.critical(f"FATAL ERROR: {e}", exc_info=True)
 
 if __name__ == '__main__':
     main()
