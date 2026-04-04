@@ -148,9 +148,9 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     status = row[0] if row else "unregistered"
     await update.message.reply_text(f"Your status: {status.upper()}")
 
-async def timing_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    timing = await database.get_global("giveaway_timing", "Timings not set yet.")
-    await update.message.reply_text(f"⏳ **Giveaway Timings:**\n{timing}", parse_mode='Markdown')
+async def event_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    event_dates = await database.get_global("giveaway_event", "Event dates not set yet.")
+    await update.message.reply_text(f"📅 **Giveaway Event Dates:**\n{event_dates}", parse_mode='Markdown')
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
@@ -163,7 +163,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/leaderboard - Show top users based on XP\n"
         "/chatrank - Show top users based on chat activity\n"
         "/rules - View giveaway rules\n"
-        "/timing - View giveaway timings\n"
+        "/event - View giveaway start and end dates\n"
         "/status - Check your verification status\n"
         "/help - Show all available commands"
     )

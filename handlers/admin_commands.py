@@ -121,14 +121,14 @@ async def participants_command(update: Update, context: ContextTypes.DEFAULT_TYP
     count = row[0] if row else 0
     await update.message.reply_text(f"Total Approved Participants: {count}")
 
-async def set_timing_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def set_event_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_admin(update.effective_user.id):
         return
         
     if not context.args:
-        await update.message.reply_text("Usage: /set_timing <description of dates and times>")
+        await update.message.reply_text("Usage: /set_event <Start Date> to <End Date>")
         return
         
-    timing_text = " ".join(context.args)
-    await database.set_global('giveaway_timing', timing_text)
-    await update.message.reply_text(f"✅ Giveaway timings set! Users can see this using /timing.")
+    event_text = " ".join(context.args)
+    await database.set_global('giveaway_event', event_text)
+    await update.message.reply_text(f"✅ Giveaway event dates set! Users can see this using /event.")
