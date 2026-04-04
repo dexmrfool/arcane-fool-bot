@@ -31,8 +31,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await db.commit()
         
     await update.message.reply_text(
-        "🔒 Verification Required\nJoin the official Group Chat and Channel to participate.\n"
-        "After joining, type /verify"
+        "🔒 **Verification Required**\n\n"
+        "Join our official communities to participate:\n"
+        "1️⃣ **Group Chat:** [The Fools Gathering](https://t.me/TheFoolsGathering)\n"
+        "2️⃣ **Channel:** [Fools Arcana](https://t.me/Fools_arcana)\n\n"
+        "After joining both, type /verify", parse_mode='Markdown', disable_web_page_preview=True
     )
 
 async def check_membership(bot, chat_id, user_id):
@@ -145,6 +148,10 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     status = row[0] if row else "unregistered"
     await update.message.reply_text(f"Your status: {status.upper()}")
 
+async def timing_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    timing = await database.get_global("giveaway_timing", "Timings not set yet.")
+    await update.message.reply_text(f"⏳ **Giveaway Timings:**\n{timing}", parse_mode='Markdown')
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🤖 **Available Commands**\n"
@@ -156,7 +163,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/leaderboard - Show top users based on XP\n"
         "/chatrank - Show top users based on chat activity\n"
         "/rules - View giveaway rules\n"
+        "/timing - View giveaway timings\n"
         "/status - Check your verification status\n"
         "/help - Show all available commands"
     )
-    await update.message.reply_text(help_text)
+    await update.message.reply_text(help_text, parse_mode='Markdown')

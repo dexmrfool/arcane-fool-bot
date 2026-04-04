@@ -54,6 +54,7 @@ def main():
     application.add_handler(CommandHandler("leaderboard", user_commands.leaderboard_command))
     application.add_handler(CommandHandler("chatrank", user_commands.chatrank_command))
     application.add_handler(CommandHandler("rules", user_commands.rules_command))
+    application.add_handler(CommandHandler("timing", user_commands.timing_command))
     application.add_handler(CommandHandler("status", user_commands.status_command))
     application.add_handler(CommandHandler("help", user_commands.help_command))
 
@@ -61,6 +62,7 @@ def main():
     application.add_handler(CommandHandler("approve", admin_commands.approve_command))
     application.add_handler(CommandHandler("remove", admin_commands.remove_command))
     application.add_handler(CommandHandler("broadcast", admin_commands.broadcast_command))
+    application.add_handler(CommandHandler("set_timing", admin_commands.set_timing_command))
     application.add_handler(CommandHandler("end_event", admin_commands.end_event_command))
     application.add_handler(CommandHandler("participants", admin_commands.participants_command))
     
