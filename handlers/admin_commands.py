@@ -4,6 +4,7 @@ from telegram.ext import ContextTypes
 from telegram.error import BadRequest
 import database
 from config import ADMIN_IDS
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -131,4 +132,51 @@ async def set_event_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     event_text = " ".join(context.args)
     await database.set_global('giveaway_event', event_text)
-    await update.message.reply_text(f"✅ Giveaway event dates set! Users can see this using /event.")
+    
+    bot_info = await context.bot.get_me()
+    admin_invite = f"https://t.me/{bot_info.username}"
+    
+    await update.message.reply_text(f"✅ Giveaway event dates set! Users can see this using /event.\n\nShare the bot using this link: {admin_invite}")
+
+async def handle_approval_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    
+    admin_id = update.effective_user.id
+    if not is_admin(admin_id):
+        return
+        
+    data = query.data
+    action, user_id_str = data.split('_')
+    target_user_id = int(user_id_str)
+    
+    db = await database.get_db()
+    
+    if action == "approve":
+        await db.execute("UPDATE users SET status = 'approved', join_time = ? WHERE id = ?", (int(time.time()), target_user_id))
+        await db.commit()
+        
+        bot_info = await context.bot.get_me()
+        invite_link = f"https://t.me/{bot_info.username}?start={target_user_id}"
+        
+        try:
+            await context.bot.send_message(
+                chat_id=target_user_id,
+                text=f"🎉 **Approved!**\n\nYour official invite link is:\n{invite_link}",
+                parse_mode='Markdown'
+            )
+        except Exception as e:
+            logger.error(f"Failed to DM user: {e}")
+            
+        await query.edit_message_text(text=f"✅ You approved user {target_user_id}.")
+        
+    elif action == "reject":
+        await db.execute("UPDATE users SET status = 'unregistered' WHERE id = ?", (target_user_id,))
+        await db.commit()
+        
+        try:
+            await context.bot.send_message(chat_id=target_user_id, text="❌ Your verification was rejected.")
+        except:
+            pass
+            
+        await query.edit_message_text(text=f"❌ You rejected user {target_user_id}.")

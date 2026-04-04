@@ -1,5 +1,5 @@
 import logging
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ChatMemberHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ChatMemberHandler, CallbackQueryHandler
 from config import BOT_TOKEN
 import database
 
@@ -65,6 +65,9 @@ def main():
     application.add_handler(CommandHandler("set_event", admin_commands.set_event_command))
     application.add_handler(CommandHandler("end_event", admin_commands.end_event_command))
     application.add_handler(CommandHandler("participants", admin_commands.participants_command))
+    
+    # Register Interactive Button Callbacks
+    application.add_handler(CallbackQueryHandler(admin_commands.handle_approval_callback, pattern='^(approve|reject)_'))
     
     # Register Group Chat Member Updates (leaving group)
     application.add_handler(ChatMemberHandler(member_updates.track_chats_member_updates, ChatMemberHandler.CHAT_MEMBER))
